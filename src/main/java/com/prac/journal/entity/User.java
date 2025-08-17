@@ -17,9 +17,10 @@ public class User  {
 
     @Id
     private ObjectId id;
+
     @Indexed(unique = true)
     @NonNull
-    private String user_name;
+    private String userName;
     @NonNull
     private String password ;
 

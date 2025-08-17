@@ -23,7 +23,7 @@ public class JournalEntryControllerV2 {
     public ResponseEntity<?> getall(){
         List<JournalEntry> all = journalEntryService.getAll();
         if(all !=null && !all.isEmpty()){
-            return new ResponseEntity<>(HttpStatus.OK);
+            return new ResponseEntity<>(journalEntryService.getAll() ,HttpStatus.OK);
         }
         return  new ResponseEntity<>(HttpStatus.NOT_FOUND);
 //        return journalEntryService.getAll() ;

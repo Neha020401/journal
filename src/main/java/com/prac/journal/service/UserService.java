@@ -1,6 +1,6 @@
 package com.prac.journal.service;
 
-
+import com.prac.journal.entity.JournalEntry;
 import com.prac.journal.entity.User;
 import com.prac.journal.repository.UserRepository;
 import org.bson.types.ObjectId;
@@ -16,19 +16,19 @@ public class UserService {
     @Autowired
     private UserRepository userRepository;
 
-    public void saveEntry(User userEntry ){
-        userRepository.save(userEntry);
+    public void saveEntry(User user ){
+        userRepository.save(user);
     }
 
-    public List<User> getAll(){
+    public  List<User> getAll(){
         return userRepository.findAll() ;
     }
 
-    public Optional<User> findbyId(ObjectId id){
-        return  userRepository.findById(id);
+    public User findbyUserName(String userName){
+        return userRepository.findByUserName(userName);
     }
 
-    public void deleteById(ObjectId id ){
-        userRepository.deleteById(id);
-    }
+//    public void deleteByUserName(String userName){
+//        userRepository.deleteByUserName(userName);
+//    }
 }
