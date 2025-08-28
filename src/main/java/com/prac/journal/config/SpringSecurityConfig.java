@@ -22,7 +22,7 @@ public class SpringSecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/journal/**").authenticated()
+                        .requestMatchers("/journal/**","/user/**").authenticated()
                         .anyRequest().permitAll()
                 ).httpBasic();
 
