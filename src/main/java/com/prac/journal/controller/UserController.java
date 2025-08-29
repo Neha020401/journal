@@ -20,6 +20,8 @@ public class UserController {
 
     @Autowired
     private UserService userService;
+    @Autowired
+    private  UserRepository userRepository ;
 
     @GetMapping
     public ResponseEntity<?> getall(){
@@ -58,8 +60,12 @@ public class UserController {
         return  new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
-    public ResponseEntity<> deleteByuserName(){
-        Authentication 
+    public ResponseEntity<?> deleteByuserName(){
+        Authentication authentication =   SecurityContextHolder.getContext().getAuthentication();
+       String user = authentication.getName();
+       userService.deleteByUserName(user);
+       return new ResponseEntity<>("User ${user} deleted " , HttpStatus.NO_CONTENT);
+
     }
 
 }
