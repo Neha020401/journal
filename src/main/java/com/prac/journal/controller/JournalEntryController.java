@@ -10,6 +10,8 @@ import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
@@ -36,22 +38,24 @@ public class JournalEntryController {
 //        return journalEntryService.getAll() ;
     }
 
-    @PostMapping("/{userName}")
-    public ResponseEntity<?> createEntry(
-            @Valid @RequestBody JournalEntry myentries,   // ✅ enforce validation
-            @PathVariable String userName) {
+    @PostMapping
+    public ResponseEntity<?> createEntry(@Valid @RequestBody JournalEntry myentries) {
         try {
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication() ;
+            String userName = authentication.getName();
             User user = userService.findbyUserName(userName);
             myentries.setDate(LocalDateTime.now());
             JournalEntry saved = journalEntryService.saveEntry(myentries, userName);
             return new ResponseEntity<>(saved, HttpStatus.CREATED);
         } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>("Can't create entry for user  ${userName}",HttpStatus.BAD_REQUEST);
         }
     }
 
     @GetMapping("id/{myId}")
     public ResponseEntity<JournalEntry> getJournalEntries(@PathVariable ObjectId myId){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication() ;
+        String userName = authentication.getName();
         Optional<JournalEntry> journalEntry = journalEntryService.findbyId(myId);
         if( journalEntry.isPresent()){
             return  new ResponseEntity<>(journalEntry.get(), HttpStatus.OK);
