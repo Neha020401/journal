@@ -43,4 +43,12 @@ public class UserService {
     public void deleteByUserName(String userName){
         userRepository.deleteByUserName(userName);
     }
+
+    public void updateUser(User user) {
+        if (user.getPassword() != null) {
+            user.setPassword(passwordEncoder.encode(user.getPassword()));
+        }
+        userRepository.save(user);
+    }
+
 }

@@ -33,33 +33,22 @@ public class UserController {
 //        return journalEntryService.getAll() ;
     }
 
-    // Will use public for  creating users
-//    @PostMapping
-//    public ResponseEntity<?> createEntry(@RequestBody User user){
-//        try {
-////            userService.saveEntry(user);
-//            userService.saveNewUser(user);
-//            return new ResponseEntity<>(user, HttpStatus.CREATED);
-//        } catch (Exception e) {
-//            return new ResponseEntity<>("User with this username already exists!", HttpStatus.BAD_REQUEST);
-//        }
-//    }
 
 
     @PutMapping
     public ResponseEntity<?> updateUser(@RequestBody User user  ){
         Authentication authentication =   SecurityContextHolder.getContext().getAuthentication();
         String userName = authentication.getName();
-
         User userInDb = userService.findbyUserName(userName);
         if(userInDb != null){
             userInDb.setUserName(user.getUserName());
             userInDb.setPassword(user.getPassword());
-            userService.saveEntry(userInDb);
+            userService.saveNewUser(userInDb);
         }
         return  new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
+    @DeleteMapping
     public ResponseEntity<?> deleteByuserName(){
         Authentication authentication =   SecurityContextHolder.getContext().getAuthentication();
        String user = authentication.getName();
