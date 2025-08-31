@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/journal")
@@ -27,8 +28,10 @@ public class JournalEntryController {
     @Autowired
     private UserService userService;
 
-    @GetMapping("/{userName}")
-    public ResponseEntity<?> getallJournalEntryforUser(@PathVariable String userName){
+    @GetMapping
+    public ResponseEntity<?> getallJournalEntryforUser(){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication() ;
+        String userName = authentication.getName();
         User user = userService.findbyUserName(userName);
         List<JournalEntry> all = user.getJournalentries();
         if(all !=null && !all.isEmpty()){
@@ -45,7 +48,7 @@ public class JournalEntryController {
             String userName = authentication.getName();
             User user = userService.findbyUserName(userName);
             myentries.setDate(LocalDateTime.now());
-            JournalEntry saved = journalEntryService.saveEntry(myentries, userName);
+            JournalEntry saved = journalEntryService.saveEntry(myentries, userName );
             return new ResponseEntity<>(saved, HttpStatus.CREATED);
         } catch (Exception e) {
             return new ResponseEntity<>("Can't create entry for user  ${userName}",HttpStatus.BAD_REQUEST);
@@ -56,13 +59,16 @@ public class JournalEntryController {
     public ResponseEntity<JournalEntry> getJournalEntries(@PathVariable ObjectId myId){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication() ;
         String userName = authentication.getName();
-        Optional<JournalEntry> journalEntry = journalEntryService.findbyId(myId);
-        if( journalEntry.isPresent()){
-            return  new ResponseEntity<>(journalEntry.get(), HttpStatus.OK);
-        }
+       User user =  userService.findbyUserName(userName);
+     List<JournalEntry> collect =  user.getJournalentries().stream().filter(x -> x.getId().equals(myId)).collect(Collectors.toList());
 
+     if(!collect.isEmpty()){
+         Optional<JournalEntry> journalEntry = journalEntryService.findbyId(myId);
+         if( journalEntry.isPresent()){
+             return  new ResponseEntity<>(journalEntry.get(), HttpStatus.OK);
+         }
+     }
         return  new ResponseEntity<>(HttpStatus.NOT_FOUND);
-//        return journalEntryService.findbyId(myId).orElse(null) ;
     }
 
 
