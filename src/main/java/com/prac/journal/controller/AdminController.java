@@ -19,14 +19,14 @@ public class AdminController {
     @Autowired
     private UserService userService;
 
-    @GetMapping
+    @GetMapping("/all-users")
     public ResponseEntity<?> getAllUsers(){
         List<User> all = userService.getAll();
 
         if(all!= null && !all.isEmpty()){
             return new ResponseEntity<>(all, HttpStatus.OK);
         }
-        return new ResponseEntity<>(" No User Found", HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>("No User Found", HttpStatus.NOT_FOUND);
     }
 
 }
