@@ -2,6 +2,8 @@ package com.prac.journal.service;
 
 import com.prac.journal.entity.User;
 import com.prac.journal.repository.UserRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -16,6 +18,7 @@ public class UserService {
 
     @Autowired
     private UserRepository userRepository;
+    private static final Logger logger = LoggerFactory.getLogger(UserService.class);
 
 
     private  static  final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
@@ -25,10 +28,15 @@ public class UserService {
     }
 
     public void saveNewUser(User user ){
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
-        user.setRole(Arrays.asList("USER"));
-        userRepository.save(user);
-    }
+        try{
+            user.setPassword(passwordEncoder.encode(user.getPassword()));
+            user.setRole(Arrays.asList("USER"));
+            userRepository.save(user);
+        } catch (Exception e) {
+            logger.info("This info might from error to info the  same user is not allowed to create account");
+            throw new RuntimeException(e);
+        }
+      }
 
     public void saveAdmin(User user ){
         user.setPassword(passwordEncoder.encode(user.getPassword()));
